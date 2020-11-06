@@ -1,0 +1,12 @@
+en:
+  NSWDPC\Schema\SpecialAnnouncement:
+    LINK_Link: 'URL'
+    LINK_NewsUpdatesAndGuidelines: 'News, updates and guidelines'
+    LINK_DiseasePreventionInfo: 'Disease prevention info'
+    LINK_DiseaseSpreadStatistics: 'Disease spread statistics'
+    LINK_GettingTestedInfo: 'Getting tested info'
+    LINK_GovernmentBenefitsInfo: 'Government benefits info'
+    LINK_PublicTransportClosuresInfo: 'Public transport closures info'
+    LINK_QuarantineGuidelines: 'Quarantine guidelines'
+    LINK_SchoolClosuresInfo: 'School closures info'
+    LINK_TravelBans: 'Travel bans'
