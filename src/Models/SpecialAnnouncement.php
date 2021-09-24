@@ -22,6 +22,7 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\CMS\Controllers\ContentController;
 use Page;
 
 /**
@@ -433,7 +434,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         $page = null;
 
         $announcements = SpecialAnnouncement::get();
-        if ($controller) {
+        if ($controller && ($controller instanceof ContentController)) {
             $page = $controller->data();
         }
 
