@@ -83,6 +83,10 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         'Image'
     ];
 
+    private static $indexes = [
+        'IsGlobal' => true
+    ];
+
     public function onAfterWrite()
     {
         parent::onAfterWrite();
