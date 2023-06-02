@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "dnadesign/silverstripe-elemental": "^4.9.0",
+        "dnadesign/silverstripe-elemental": "^5",
         "gorriecoe/silverstripe-linkfield": "^1.0.0"
     },
     "require-dev": {
