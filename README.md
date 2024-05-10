@@ -2,8 +2,6 @@
 
 This module provides support for the [SpecialAnnouncement term within the schema.org specification](https://schema.org/SpecialAnnouncement) within the Silverstripe content management system
 
-> This module is in a pre-release state
-
 ## Features
 
 + Add an [elemental block](https://github.com/dnadesign/silverstripe-elemental) to a page, to select and display a single special announcement
