@@ -28,7 +28,7 @@ class ElementSpecialAnnouncement extends BaseElement
 
     private static string $title = 'Special Announcement';
 
-    private static string $description = 'Select and display a single special announcement';
+    private static string $class_description = 'Select and display a single special announcement';
 
     private static array $has_one = [
         'SpecialAnnouncement' => SpecialAnnouncement::class,
