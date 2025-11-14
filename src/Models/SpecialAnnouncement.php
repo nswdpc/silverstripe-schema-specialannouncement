@@ -7,7 +7,6 @@ use gorriecoe\Link\Models\Link;
 use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -170,7 +169,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
                 TextField::create(
                     'Category',
                     _t(self::class . ".CATEGORY", "Category")
-                )->setValue( $this->config()->get('default_category_url') )
+                )->setValue($this->config()->get('default_category_url'))
                 ->setRightTitle(
                     _t(
                         self::class . '.DEFAULT_CATEGORY_INFO',
@@ -287,11 +286,11 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
                 'SpecialAnnouncementHelper',
                 '<p class="message warning">'
                 . _t(
-                        self::class . ".DESCRIPTION_FOR_MORE_INFO",
-                        "Please read {url} before completing these fields",
-                        [
-                            "url" => "https://schema.org/SpecialAnnouncement"
-                        ]
+                    self::class . ".DESCRIPTION_FOR_MORE_INFO",
+                    "Please read {url} before completing these fields",
+                    [
+                        "url" => "https://schema.org/SpecialAnnouncement"
+                    ]
                 )
                 . "</p>"
             ),
@@ -301,7 +300,8 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         return $fields;
     }
 
-    public function getLinkDescriptions(): array {
+    public function getLinkDescriptions(): array
+    {
         return [
             'Link' => _t(self::class . '.Link_INFO', 'The URL where a person can find more information about the announcement'),
 
@@ -325,9 +325,10 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         ];
     }
 
-    public function getLinkDescription($key) {
+    public function getLinkDescription($key)
+    {
         $descriptions = $this->getLinkDescriptions();
-        if(isset($descriptions[ $key ])){
+        if (isset($descriptions[ $key ])) {
             return $descriptions[ $key ];
         }
 
@@ -341,9 +342,10 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         return json_encode($schema, JSON_PRETTY_PRINT);
     }
 
-    public function getCategoryUrl() {
+    public function getCategoryUrl()
+    {
         $url = $this->Category;
-        if(!$url) {
+        if (!$url) {
             $url = $this->config()->get('default_category_url');
         }
 
