@@ -328,11 +328,8 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     public function getLinkDescription($key)
     {
         $descriptions = $this->getLinkDescriptions();
-        if (isset($descriptions[ $key ])) {
-            return $descriptions[ $key ];
-        }
 
-        return "";
+        return $descriptions[ $key ] ?? "";
     }
 
     public function SchemaJSON()
@@ -362,7 +359,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             "@type" => 'SpecialAnnouncement',
             "category" => $record->getCategoryUrl(),
             "name" => $record->Title,
-            "text" => strip_tags($record->ShortDescription),
+            "text" => strip_tags((string) $record->ShortDescription),
         ];
 
         $image = $record->Image();
