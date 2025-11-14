@@ -91,7 +91,12 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     {
         parent::onAfterWrite();
         if ($this->IsGlobal == 1) {
-            DB::query("UPDATE `SchemaSpecialAnnouncement` SET IsGlobal = 0 WHERE ID <> '" . Convert::raw2sql($this->ID) . "'");
+            DB::prepared_query(
+                "UPDATE \"SchemaSpecialAnnouncement\" SET IsGlobal = 0 WHERE ID <> ?",
+                [
+                    $this->ID
+                ]
+            );
         }
     }
 
