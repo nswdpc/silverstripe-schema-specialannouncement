@@ -467,7 +467,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     /**
      * Render this special announcement into HTML
      */
-    public function forTemplate()
+    public function forTemplate(): string
     {
         return $this->renderWith(SpecialAnnouncement::class);
     }
