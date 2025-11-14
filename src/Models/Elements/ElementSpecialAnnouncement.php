@@ -10,36 +10,43 @@ use SilverStripe\Forms\DropdownField;
  * Each element simply references an {@link NSWDPC\Schema\SpecialAnnouncement\SpecialAnnouncement} managed in the model admin
  *
  * @author James
+ * @property int $SpecialAnnouncementID
+ * @method \NSWDPC\Schema\SpecialAnnouncement\SpecialAnnouncement SpecialAnnouncement()
  */
 class ElementSpecialAnnouncement extends BaseElement
 {
-    private static $table_name = 'ElementSpecialAnnouncement';
+    private static string $table_name = 'ElementSpecialAnnouncement';
 
-    private static $singular_name = 'special announcement';
-    private static $plural_name = 'special announcements';
+    private static string $singular_name = 'special announcement';
 
-    private static $icon = 'font-icon-chat';
+    private static string $plural_name = 'special announcements';
 
-    private static $inline_editable = true;
+    private static string $icon = 'font-icon-chat';
+
+    private static bool $inline_editable = true;
 
 
-    private static $title = 'Special Announcement';
-    private static $description = 'Select and display a single special announcement';
+    private static string $title = 'Special Announcement';
 
-    private static $has_one = [
+    private static string $description = 'Select and display a single special announcement';
+
+    private static array $has_one = [
         'SpecialAnnouncement' => SpecialAnnouncement::class,
     ];
 
+    #[\Override]
     public function getSummary()
     {
         return "Special announcement";
     }
 
+    #[\Override]
     public function getType()
     {
-        return _t(__CLASS__ . '.BlockType', "Special announcement");
+        return _t(self::class . '.BlockType', "Special announcement");
     }
 
+    #[\Override]
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
