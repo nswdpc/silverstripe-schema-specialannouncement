@@ -6,7 +6,7 @@ use gorriecoe\LinkField\LinkField;
 use gorriecoe\Link\Models\Link;
 use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use Silverstripe\Control\Controller;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
