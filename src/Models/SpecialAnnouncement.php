@@ -352,8 +352,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
             $link = Link::get()->byId($record->getField("{$relation}ID"));
             if ($link) {
-                // does the link have a mapping ?
-                $key = isset(self::$_mapping[ $relation ]) ? self::$_mapping[ $relation ] : lcfirst($relation);
+                $key = lcfirst($relation);
                 $url = $link->getLinkURL();
                 if ($url) {
                     $schema[ $key ] = $url;
