@@ -15,19 +15,9 @@
             "role" :  "Developer"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/nswdpc/silverstripe-link.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/nswdpc/silverstripe-linkfield.git"
-        }
-    ],
     "require": {
         "dnadesign/silverstripe-elemental": "^6",
-        "gorriecoe/silverstripe-linkfield": "dev-ss6",
+        "nswdpc/silverstripe-linkfield": "^2",
         "silverstripe/asset-admin": "^3"
     },
     "require-dev": {
