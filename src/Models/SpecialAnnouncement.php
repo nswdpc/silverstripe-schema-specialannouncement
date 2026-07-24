@@ -332,7 +332,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         return $descriptions[ $key ] ?? "";
     }
 
-    public function SchemaJSON()
+    public function SchemaJSON(): string|false
     {
         $schema = self::get_schema_json($this);
         $this->extend('updateSpecialAnnnouncementSchema', $schema);
