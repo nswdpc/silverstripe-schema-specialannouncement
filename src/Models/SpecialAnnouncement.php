@@ -332,7 +332,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         return $descriptions[ $key ] ?? "";
     }
 
-    public function SchemaJSON()
+    public function SchemaJSON(): string|false
     {
         $schema = self::get_schema_json($this);
         $this->extend('updateSpecialAnnnouncementSchema', $schema);
@@ -341,12 +341,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
     public function getCategoryUrl()
     {
-        $url = $this->Category;
-        if (!$url) {
-            $url = $this->config()->get('default_category_url');
-        }
-
-        return $url;
+        return $this->Category ?? '';
     }
 
     /**
@@ -467,7 +462,8 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     /**
      * Render this special announcement into HTML
      */
-    public function forTemplate()
+    #[\Override]
+    public function forTemplate(): string
     {
         return $this->renderWith(SpecialAnnouncement::class);
     }

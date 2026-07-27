@@ -1,6 +1,6 @@
 # Schema.org Special Announcement for Silverstripe
 
-This module provides support for the [SpecialAnnouncement term within the schema.org specification](https://schema.org/SpecialAnnouncement) within the Silverstripe content management system
+This module provides support for the [SpecialAnnouncement term within the schema.org specification](https://schema.org/SpecialAnnouncement) within the Silverstripe CMS.
 
 ## Features
 
@@ -12,6 +12,8 @@ This module provides support for the [SpecialAnnouncement term within the schema
 + Link support for internal and external URLs
 
 ## Supported schema.org/SpecialAnnouncement metadata
+
+This module was originally introduced to support COVID-19 announcements. It can be used for any type of "special announcement".
 
 ```javascript
 <script type="application/ld+json">
@@ -52,21 +54,29 @@ The recommended way of installing this module is via [composer](https://getcompo
 composer require nswdpc/silverstripe-schema-specialannouncement
 ```
 
-## License
+Ensure you add the `'NSWDPC\Schema\SpecialAnnouncement\ElementSpecialAnnouncement'` as `allowed_element` in your project configuration.
 
-[BSD-3-Clause](./LICENSE.md)
+## Templating
+
+This module provides basic templates to implement a special announcement on your site. Your developer can provide a specific template to meet the requirements of your project
 
 ## Documentation
 
-* [Documentation](./docs/en/001_index.md)
+* [General information](./docs/en/001_index.md)
+* [Global site-wide announcements](./docs/en/002_sitewide-announcements.md)
 
 ## Configuration
 
 There is no configuration outside of the administration area, currently.
 
+
+## License
+
+[BSD-3-Clause](./LICENSE.md)
+
 ## Maintainers
 
-+ [dpcdigital@NSWDPC:~$](https://dpc.nsw.gov.au)
++ PD Web Team
 
 ## TODO
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NSWDPC\Schema\SpecialAnnouncement;
 
 use SilverStripe\Admin\ModelAdmin;
