@@ -76,7 +76,7 @@ There is no configuration outside of the administration area, currently.
 
 ## Maintainers
 
-+ [dpcdigital@NSWDPC:~$](https://dpc.nsw.gov.au)
++ PD Web Team
 
 ## TODO
 
