@@ -341,12 +341,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
     public function getCategoryUrl()
     {
-        $url = $this->Category;
-        if (!$url) {
-            $url = $this->config()->get('default_category_url');
-        }
-
-        return $url;
+        return $this->Category ?? '';
     }
 
     /**
