@@ -22,6 +22,8 @@ use SilverStripe\Security\PermissionProvider;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\LinkField\Models\Link as CoreLink;
+use SilverStripe\LinkField\Form\LinkField as CoreLinkField;
 use Page;
 
 /**
@@ -93,6 +95,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     private static array $has_one = [
         'Image' => Image::class,
         'Link' => Link::class,
+        'CoreLink' => CoreLink::class,
         'NewsUpdatesAndGuidelines' => Link::class,
         'DiseasePreventionInfo' => Link::class,
         'DiseaseSpreadStatistics' => Link::class,
@@ -109,6 +112,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     ];
 
     private static array $owns = [
+        'CoreLink',
         'Image'
     ];
 
@@ -261,22 +265,47 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
         $has_ones = $this->hasOne();
 
+        // handle link fields
         foreach ($has_ones as $relation => $class) {
             if ($class != Link::class) {
                 continue;
             }
 
-            $fields->removeByName($relation . "ID");
+            $fields->removeByName([
+                $relation . "ID",
+                "Core" . $relation . "ID"
+            ]);
 
-            $fields->addFieldToTab(
-                'Root.URLS',
-                LinkField::create(
+
+            // check if migrated
+            $link = $this->{$relation}();
+            $coreLink = null;
+            $coreLinkRelation = "Core" . $relation;
+            if($link &&  $link->IsMigrated == 1) {
+                $coreLink = $link->MigratedLink();
+            }
+            if($coreLink && $coreLink->isInDB()) {
+                // link was migrated, use new field
+                $linkField = CoreLinkField::create(
+                    $coreLinkRelation,
+                    FormField::name_to_label($relation)
+                )->setDescription(
+                    $this->getLinkDescription($relation)
+                );
+            } else {
+                // else use legacy field
+                $linkField = LinkField::create(
                     $relation,
                     FormField::name_to_label($relation),
                     $this
                 )->setDescription(
                     $this->getLinkDescription($relation)
-                )
+                );
+            }
+
+            $fields->addFieldToTab(
+                'Root.URLS',
+                $linkField
             );
         }
 
@@ -323,6 +352,17 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
             'TravelBans' => _t(self::class . '.TravelBans_INFO', 'A link to nformation about travel bans in the context of COVID-19, if applicable to the announcement.'),
         ];
+    }
+
+    /**
+     * Returns the migrated core Link if one exists or the original link
+     */
+    public function getLink(): CoreLink|Link|null
+    {
+        if ($this->CoreLinkID) {
+            return $this->CoreLink();
+        }
+        return $this->getComponent('Link');
     }
 
     public function getLinkDescription($key)
@@ -380,14 +420,24 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
         $has_ones = $record->hasOne();
 
-        // add Links to provided information
+        /**
+         * add Links to provided information
+         * handle both types of links
+         */
         foreach ($has_ones as $relation => $class) {
             if ($class != Link::class) {
                 continue;
             }
 
-            $link = Link::get()->byId($record->getField("{$relation}ID"));
-            if ($link) {
+            // Determine which link to retrieve
+            $targetLink = $record->{$relation}();
+            $isMigrated = $targetLink && $targetLink->IsMigrated == 1;
+            if($isMigrated) {
+                // migrated link
+                $targetLink = $targetLink->MigratedLink();
+            }
+
+            if ($targetLink && $targetLink->isInDB()) {
                 $key = lcfirst((string) $relation);
                 $url = $link->getLinkURL();
                 if ($url) {
