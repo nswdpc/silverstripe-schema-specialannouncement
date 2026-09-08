@@ -439,7 +439,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
             if ($targetLink && $targetLink->isInDB()) {
                 $key = lcfirst((string) $relation);
-                $url = $link->getLinkURL();
+                $url = $targetLink->getLinkURL();
                 if ($url) {
                     $schema[ $key ] = $url;
                 }
