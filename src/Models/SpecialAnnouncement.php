@@ -281,6 +281,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             $link = $this->{$relation}();
             $coreLink = null;
             $coreLinkRelation = "Core" . $relation;
+            // TODO should this just not pull Core{$relation}() ?
             if($link &&  $link->IsMigrated == 1) {
                 $coreLink = $link->MigratedLink();
             }
