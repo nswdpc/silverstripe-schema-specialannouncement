@@ -62,6 +62,8 @@ use Page;
  * @method \gorriecoe\Link\Models\Link SchoolClosuresInfo()
  * @method \gorriecoe\Link\Models\Link TravelBans()
  * @method \SilverStripe\ORM\ManyManyList<\Page> Pages()
+ * @property int $CoreLinkID
+ * @method \SilverStripe\LinkField\Models\Link CoreLink()
  */
 class SpecialAnnouncement extends DataObject implements PermissionProvider, TemplateGlobalProvider
 {
@@ -285,6 +287,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             if($link &&  $link->IsMigrated == 1) {
                 $coreLink = $link->MigratedLink();
             }
+
             if($coreLink && $coreLink->isInDB()) {
                 // link was migrated, use new field
                 $linkField = CoreLinkField::create(
@@ -363,6 +366,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         if ($this->CoreLinkID) {
             return $this->CoreLink();
         }
+
         return $this->getComponent('Link');
     }
 
