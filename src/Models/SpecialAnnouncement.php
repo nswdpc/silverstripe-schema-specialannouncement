@@ -284,11 +284,11 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             $coreLink = null;
             $coreLinkRelation = "Core" . $relation;
             // TODO should this just not pull Core{$relation}() ?
-            if($link &&  $link->IsMigrated == 1) {
+            if ($link &&  $link->IsMigrated == 1) {
                 $coreLink = $link->MigratedLink();
             }
 
-            if($coreLink && $coreLink->isInDB()) {
+            if ($coreLink && $coreLink->isInDB()) {
                 // link was migrated, use new field
                 $linkField = CoreLinkField::create(
                     $coreLinkRelation,
@@ -437,7 +437,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             // Determine which link to retrieve
             $targetLink = $record->{$relation}();
             $isMigrated = $targetLink && $targetLink->IsMigrated == 1;
-            if($isMigrated) {
+            if ($isMigrated) {
                 // migrated link
                 $targetLink = $targetLink->MigratedLink();
             }
