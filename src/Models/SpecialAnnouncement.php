@@ -10,7 +10,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\DatetimeField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\CheckboxField;
@@ -22,6 +21,8 @@ use SilverStripe\Security\PermissionProvider;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\LinkField\Models\Link as CoreLink;
+use SilverStripe\LinkField\Form\LinkField as CoreLinkField;
 use Page;
 
 /**
@@ -60,6 +61,26 @@ use Page;
  * @method \gorriecoe\Link\Models\Link SchoolClosuresInfo()
  * @method \gorriecoe\Link\Models\Link TravelBans()
  * @method \SilverStripe\ORM\ManyManyList<\Page> Pages()
+ * @property int $CoreLinkID
+ * @method \SilverStripe\LinkField\Models\Link CoreLink()
+ * @property int $CoreNewsUpdatesAndGuidelinesID
+ * @property int $CoreDiseasePreventionInfoID
+ * @property int $CoreDiseaseSpreadStatisticsID
+ * @property int $CoreGettingTestedInfoID
+ * @property int $CoreGovernmentBenefitsInfoID
+ * @property int $CorePublicTransportClosuresInfoID
+ * @property int $CoreQuarantineGuidelinesID
+ * @property int $CoreSchoolClosuresInfoID
+ * @property int $CoreTravelBansID
+ * @method \SilverStripe\LinkField\Models\Link CoreNewsUpdatesAndGuidelines()
+ * @method \SilverStripe\LinkField\Models\Link CoreDiseasePreventionInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreDiseaseSpreadStatistics()
+ * @method \SilverStripe\LinkField\Models\Link CoreGettingTestedInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreGovernmentBenefitsInfo()
+ * @method \SilverStripe\LinkField\Models\Link CorePublicTransportClosuresInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreQuarantineGuidelines()
+ * @method \SilverStripe\LinkField\Models\Link CoreSchoolClosuresInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreTravelBans()
  */
 class SpecialAnnouncement extends DataObject implements PermissionProvider, TemplateGlobalProvider
 {
@@ -93,15 +114,25 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     private static array $has_one = [
         'Image' => Image::class,
         'Link' => Link::class,
+        'CoreLink' => CoreLink::class,
         'NewsUpdatesAndGuidelines' => Link::class,
+        'CoreNewsUpdatesAndGuidelines' => CoreLink::class,
         'DiseasePreventionInfo' => Link::class,
+        'CoreDiseasePreventionInfo' => CoreLink::class,
         'DiseaseSpreadStatistics' => Link::class,
+        'CoreDiseaseSpreadStatistics' => CoreLink::class,
         'GettingTestedInfo' => Link::class,
+        'CoreGettingTestedInfo' => CoreLink::class,
         'GovernmentBenefitsInfo' => Link::class,
+        'CoreGovernmentBenefitsInfo' => CoreLink::class,
         'PublicTransportClosuresInfo' => Link::class,
+        'CorePublicTransportClosuresInfo' => CoreLink::class,
         'QuarantineGuidelines' => Link::class,
+        'CoreQuarantineGuidelines' => CoreLink::class,
         'SchoolClosuresInfo' => Link::class,
+        'CoreSchoolClosuresInfo' => CoreLink::class,
         'TravelBans' => Link::class,
+        'CoreTravelBans' => CoreLink::class
     ];
 
     private static array $many_many = [
@@ -109,7 +140,43 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     ];
 
     private static array $owns = [
+        'CoreLink',
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
         'Image'
+    ];
+
+    private static array $cascade_deletes = [
+        "CoreLink",
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
+    ];
+
+    private static array $cascade_duplicates = [
+        "CoreLink",
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
     ];
 
     private static array $indexes = [
@@ -261,22 +328,22 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
         $has_ones = $this->hasOne();
 
+        // handle link fields
         foreach ($has_ones as $relation => $class) {
             if ($class != Link::class) {
                 continue;
             }
 
-            $fields->removeByName($relation . "ID");
+            $fields->removeByName([
+                $relation,
+                "Core" . $relation,
+                $relation . "ID",
+                "Core" . $relation . "ID"
+            ]);
 
             $fields->addFieldToTab(
-                'Root.URLS',
-                LinkField::create(
-                    $relation,
-                    FormField::name_to_label($relation),
-                    $this
-                )->setDescription(
-                    $this->getLinkDescription($relation)
-                )
+                'Root.Links',
+                $this->getLinkFieldForRelation($relation)
             );
         }
 
@@ -298,6 +365,51 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         );
 
         return $fields;
+    }
+
+    /**
+     * Get the relevant link field based on the migration state of a link
+     * @param string $relationName the name of a link e.g TravelBans
+     */
+    public function getLinkFieldForRelation(string $relationName): CoreLinkField|LinkField
+    {
+        $link = $this->getDerivedLink($relationName);
+        if ($link instanceof CoreLink) {
+            return CoreLinkField::create(
+                "Core{$relationName}",
+                _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName))
+            );
+        }
+
+        return LinkField::create(
+            $relationName,
+            _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName)),
+            $this
+        );
+    }
+
+    /**
+     * Template method
+     */
+    public function DerivedLink(string $relationName): CoreLink|Link
+    {
+        return $this->getDerivedLink($relationName);
+    }
+
+    /**
+     * @param string $relationName the name of a link e.g TravelBans
+     */
+    public function getDerivedLink(string $relationName): CoreLink|Link
+    {
+
+        $coreLink = $this->getComponent("Core{$relationName}");
+        /** @var Link $legacyLink */
+        $legacyLink = $this->getComponent($relationName);
+        if ($coreLink->isInDB() || !$legacyLink->isInDB()) {
+            return $coreLink;
+        }
+
+        return $legacyLink;
     }
 
     public function getLinkDescriptions(): array
@@ -325,7 +437,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         ];
     }
 
-    public function getLinkDescription($key)
+    public function getLinkDescription(string $key): string
     {
         $descriptions = $this->getLinkDescriptions();
 
@@ -380,16 +492,26 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
         $has_ones = $record->hasOne();
 
-        // add Links to provided information
+        /**
+         * add Links to provided information
+         * handle both types of links
+         */
         foreach ($has_ones as $relation => $class) {
             if ($class != Link::class) {
                 continue;
             }
 
-            $link = Link::get()->byId($record->getField("{$relation}ID"));
-            if ($link) {
+            // Determine which link to retrieve
+            $targetLink = $record->{$relation}();
+            $isMigrated = $targetLink && $targetLink->IsMigrated == 1;
+            if ($isMigrated) {
+                // migrated link
+                $targetLink = $targetLink->MigratedLink();
+            }
+
+            if ($targetLink && $targetLink->isInDB()) {
                 $key = lcfirst((string) $relation);
-                $url = $link->getLinkURL();
+                $url = $targetLink->getLinkURL();
                 if ($url) {
                     $schema[ $key ] = $url;
                 }

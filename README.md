@@ -11,9 +11,21 @@ This module provides support for the [SpecialAnnouncement term within the schema
 + Optionally link specific special announcements to one or more pages
 + Link support for internal and external URLs
 
+## Link Migration
+
+This version includes [staged migration of links](https://github.com/nswdpc/silverstripe-linkfield/blob/feat-link-migrator-staged/docs/en/migration.md) to the core Silverstripe Link model.
+
+1. *Important*: Update all calls to the Link methods to `$DerivedLink('relation')`/`getDerivedLink($relation)`/`DerivedLink($relation)` where `$relation` is one of the Link types e.g `TravelBans`.
+2. Once the above change is available on your site, in the "Link migration" admin section any existing links will show with a  "Migrate" button
+3. Hit the "Migrate" button
+4. Records will migrate to the core Silverstripe Link model and the Links tab interface will display the core Silverstripe link field.
+5. Template usage on site frontend will pick up the new, core, link provided the template method name has been updated.
+
+The next major release of this module will remove dependency of `nswdpc/silverstripe-linkfield` and legacy linkfield implementation.
+
 ## Supported schema.org/SpecialAnnouncement metadata
 
-This module was originally introduced to support COVID-19 announcements. It can be used for any type of "special announcement".
+This module was originally introduced to support COVID-19 announcements but it can be used for any type of "special announcement" defined in schema.org/SpecialAnnouncement
 
 ```javascript
 <script type="application/ld+json">
