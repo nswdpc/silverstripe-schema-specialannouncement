@@ -99,14 +99,23 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         'Link' => Link::class,
         'CoreLink' => CoreLink::class,
         'NewsUpdatesAndGuidelines' => Link::class,
+        'CoreNewsUpdatesAndGuidelines' => CoreLink::class,
         'DiseasePreventionInfo' => Link::class,
+        'CoreDiseasePreventionInfo' => CoreLink::class,
         'DiseaseSpreadStatistics' => Link::class,
+        'CoreDiseaseSpreadStatistics' => CoreLink::class,
         'GettingTestedInfo' => Link::class,
+        'CoreGettingTestedInfo' => CoreLink::class,
         'GovernmentBenefitsInfo' => Link::class,
+        'CoreGovernmentBenefitsInfo' => CoreLink::class,
         'PublicTransportClosuresInfo' => Link::class,
+        'CorePublicTransportClosuresInfo' => CoreLink::class,
         'QuarantineGuidelines' => Link::class,
+        'CoreQuarantineGuidelines' => CoreLink::class,
         'SchoolClosuresInfo' => Link::class,
+        'CoreSchoolClosuresInfo' => CoreLink::class,
         'TravelBans' => Link::class,
+        'CoreTravelBans' => CoreLink::class
     ];
 
     private static array $many_many = [
@@ -115,7 +124,42 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
     private static array $owns = [
         'CoreLink',
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
         'Image'
+    ];
+
+    private static array $cascade_deletes = [
+        "CoreLink",
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
+    ];
+
+    private static array $cascade_duplicates = [
+        "CoreLink",
+        'CoreNewsUpdatesAndGuidelines',
+        'CoreDiseasePreventionInfo',
+        'CoreDiseaseSpreadStatistics',
+        'CoreGettingTestedInfo',
+        'CoreGovernmentBenefitsInfo',
+        'CorePublicTransportClosuresInfo',
+        'CoreQuarantineGuidelines',
+        'CoreSchoolClosuresInfo',
+        'CoreTravelBans',
     ];
 
     private static array $indexes = [
@@ -274,42 +318,15 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             }
 
             $fields->removeByName([
+                $relation,
+                "Core" . $relation,
                 $relation . "ID",
                 "Core" . $relation . "ID"
             ]);
 
-
-            // check if migrated
-            $link = $this->{$relation}();
-            $coreLink = null;
-            $coreLinkRelation = "Core" . $relation;
-            // TODO should this just not pull Core{$relation}() ?
-            if ($link &&  $link->IsMigrated == 1) {
-                $coreLink = $link->MigratedLink();
-            }
-
-            if ($coreLink && $coreLink->isInDB()) {
-                // link was migrated, use new field
-                $linkField = CoreLinkField::create(
-                    $coreLinkRelation,
-                    FormField::name_to_label($relation)
-                )->setDescription(
-                    $this->getLinkDescription($relation)
-                );
-            } else {
-                // else use legacy field
-                $linkField = LinkField::create(
-                    $relation,
-                    FormField::name_to_label($relation),
-                    $this
-                )->setDescription(
-                    $this->getLinkDescription($relation)
-                );
-            }
-
             $fields->addFieldToTab(
-                'Root.URLS',
-                $linkField
+                'Root.Links',
+                $this->getLinkFieldForRelation($relation)
             );
         }
 
@@ -331,6 +348,51 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         );
 
         return $fields;
+    }
+
+    /**
+     * Get the relevant link field based on the migration state of a link
+     * @param string $relationName the name of a link e.g TravelBans
+     */
+    public function getLinkFieldForRelation(string $relationName): CoreLinkField|LinkField
+    {
+        $link = $this->getDerivedLink($relationName);
+        if ($link instanceof CoreLink) {
+            return CoreLinkField::create(
+                "Core{$relationName}",
+                _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName))
+            );
+        }
+
+        return LinkField::create(
+            $relationName,
+            _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName)),
+            $this
+        );
+    }
+
+    /**
+     * Template method
+     */
+    public function DerivedLink(string $relationName): CoreLink|Link
+    {
+        return $this->getDerivedLink($relationName);
+    }
+
+    /**
+     * @param string $relationName the name of a link e.g TravelBans
+     */
+    public function getDerivedLink(string $relationName): CoreLink|Link
+    {
+
+        $coreLink = $this->getComponent("Core{$relationName}");
+        /** @var Link $legacyLink */
+        $legacyLink = $this->getComponent($relationName);
+        if ($coreLink->isInDB() || !$legacyLink->isInDB()) {
+            return $coreLink;
+        }
+
+        return $legacyLink;
     }
 
     public function getLinkDescriptions(): array
@@ -358,19 +420,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         ];
     }
 
-    /**
-     * Returns the migrated core Link if one exists or the original link
-     */
-    public function getLink(): CoreLink|Link|null
-    {
-        if ($this->CoreLinkID) {
-            return $this->CoreLink();
-        }
-
-        return $this->getComponent('Link');
-    }
-
-    public function getLinkDescription($key)
+    public function getLinkDescription(string $key): string
     {
         $descriptions = $this->getLinkDescriptions();
 
