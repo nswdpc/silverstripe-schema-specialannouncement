@@ -10,7 +10,6 @@ use SilverStripe\Control\Controller;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use SilverStripe\Forms\FormField;
 use SilverStripe\Forms\DatetimeField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\CheckboxField;
