@@ -64,6 +64,24 @@ use Page;
  * @method \SilverStripe\ORM\ManyManyList<\Page> Pages()
  * @property int $CoreLinkID
  * @method \SilverStripe\LinkField\Models\Link CoreLink()
+ * @property int $CoreNewsUpdatesAndGuidelinesID
+ * @property int $CoreDiseasePreventionInfoID
+ * @property int $CoreDiseaseSpreadStatisticsID
+ * @property int $CoreGettingTestedInfoID
+ * @property int $CoreGovernmentBenefitsInfoID
+ * @property int $CorePublicTransportClosuresInfoID
+ * @property int $CoreQuarantineGuidelinesID
+ * @property int $CoreSchoolClosuresInfoID
+ * @property int $CoreTravelBansID
+ * @method \SilverStripe\LinkField\Models\Link CoreNewsUpdatesAndGuidelines()
+ * @method \SilverStripe\LinkField\Models\Link CoreDiseasePreventionInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreDiseaseSpreadStatistics()
+ * @method \SilverStripe\LinkField\Models\Link CoreGettingTestedInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreGovernmentBenefitsInfo()
+ * @method \SilverStripe\LinkField\Models\Link CorePublicTransportClosuresInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreQuarantineGuidelines()
+ * @method \SilverStripe\LinkField\Models\Link CoreSchoolClosuresInfo()
+ * @method \SilverStripe\LinkField\Models\Link CoreTravelBans()
  */
 class SpecialAnnouncement extends DataObject implements PermissionProvider, TemplateGlobalProvider
 {
