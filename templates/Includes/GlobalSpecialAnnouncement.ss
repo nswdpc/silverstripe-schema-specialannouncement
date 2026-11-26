@@ -1,5 +1,5 @@
 <% if $GlobalSpecialAnnouncements %>
     <% loop $GlobalSpecialAnnouncements %>
-        $Me
+        {$Me}
     <% end_loop %>
 <% end_if %>

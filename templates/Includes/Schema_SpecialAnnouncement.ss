@@ -23,8 +23,8 @@
         </div>
     <% end_if %>
 
-    <% if $Link %>
-        <% with $Link %>
+    <% if $DerivedLink('Link') %>
+        <% with DerivedLink('Link') %>
         <div class="link">
             <a href="$LinkURL"<% if $OpenInNewWindow %> target="_blank"<% end_if %>>$Title.XML</a>
         </div>
@@ -33,7 +33,7 @@
 
     <% if $SchemaJSON %>
     <script type="application/ld+json">
-        $SchemaJSON.RAW
+        {$SchemaJSON.RAW}
     </script>
     <% end_if %>
 

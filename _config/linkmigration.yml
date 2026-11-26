@@ -1,0 +1,18 @@
+---
+Name: nswdpc-schema-specialannouncement-linkmigration
+Only:
+  classexists: 'gorriecoe\LinkField\Migration\LinkMigrator'
+---
+gorriecoe\LinkField\Migration\LinkMigrator:
+  relation_map:
+    NSWDPC\Schema\SpecialAnnouncement\SpecialAnnouncement:
+      Link: CoreLink
+      NewsUpdatesAndGuidelines: CoreNewsUpdatesAndGuidelines
+      DiseasePreventionInfo: CoreDiseasePreventionInfo
+      DiseaseSpreadStatistics: CoreDiseaseSpreadStatistics
+      GettingTestedInfo: CoreGettingTestedInfo
+      GovernmentBenefitsInfo: CoreGovernmentBenefitsInfo
+      PublicTransportClosuresInfo: CorePublicTransportClosuresInfo
+      QuarantineGuidelines: CoreQuarantineGuidelines
+      SchoolClosuresInfo: CoreSchoolClosuresInfo
+      TravelBans: CoreTravelBans
