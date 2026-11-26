@@ -406,6 +406,7 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         /** @var Link $legacyLink */
         $legacyLink = $this->getComponent($relationName);
         if ($coreLink->isInDB() || !$legacyLink->isInDB()) {
+            /** @var CoreLink $coreLink */
             return $coreLink;
         }
 
