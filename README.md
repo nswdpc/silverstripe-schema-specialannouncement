@@ -13,15 +13,7 @@ This module provides support for the [SpecialAnnouncement term within the schema
 
 ## Link Migration
 
-This version includes [staged migration of links](https://github.com/nswdpc/silverstripe-linkfield/blob/feat-link-migrator-staged/docs/en/migration.md) to the core Silverstripe Link model.
-
-1. *Important*: Update all calls to the Link methods to `$DerivedLink('relation')`/`getDerivedLink($relation)`/`DerivedLink($relation)` where `$relation` is one of the Link types e.g `TravelBans`.
-2. Once the above change is available on your site, in the "Link migration" admin section any existing links will show with a  "Migrate" button
-3. Hit the "Migrate" button
-4. Records will migrate to the core Silverstripe Link model and the Links tab interface will display the core Silverstripe link field.
-5. Template usage on site frontend will pick up the new, core, link provided the template method name has been updated.
-
-The next major release of this module will remove dependency of `nswdpc/silverstripe-linkfield` and legacy linkfield implementation.
+If you are migrating from 2.0, go through 2.1 first to get a staged migration of links (2.0 -> 2.1 -> 3.0)
 
 ## Supported schema.org/SpecialAnnouncement metadata
 
