@@ -5,7 +5,7 @@
         <span>$ShortDescription</span>
         <% if $DerivedLink('Link') %>
             <% with $DerivedLink('Link') %>
-            <span><a href="{$LinkURL}"<% if $OpenInNewWindow %> target="_blank"<% end_if %>>{$Title.XML}</a></span>
+            <span><a href="{$URL}" rel="noopener noreferrer"<% if $OpenInNew %> target="_blank"<% end_if %>>{$Title.XML}</a></span>
             <% end_with %>
         <% end_if %>
     </p>

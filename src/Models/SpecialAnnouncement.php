@@ -2,8 +2,6 @@
 
 namespace NSWDPC\Schema\SpecialAnnouncement;
 
-use gorriecoe\LinkField\LinkField;
-use gorriecoe\Link\Models\Link;
 use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Control\Controller;
@@ -39,27 +37,7 @@ use Page;
  * @property ?string $DatePosted
  * @property ?string $Expires
  * @property int $ImageID
- * @property int $LinkID
- * @property int $NewsUpdatesAndGuidelinesID
- * @property int $DiseasePreventionInfoID
- * @property int $DiseaseSpreadStatisticsID
- * @property int $GettingTestedInfoID
- * @property int $GovernmentBenefitsInfoID
- * @property int $PublicTransportClosuresInfoID
- * @property int $QuarantineGuidelinesID
- * @property int $SchoolClosuresInfoID
- * @property int $TravelBansID
  * @method \SilverStripe\Assets\Image Image()
- * @method \gorriecoe\Link\Models\Link Link()
- * @method \gorriecoe\Link\Models\Link NewsUpdatesAndGuidelines()
- * @method \gorriecoe\Link\Models\Link DiseasePreventionInfo()
- * @method \gorriecoe\Link\Models\Link DiseaseSpreadStatistics()
- * @method \gorriecoe\Link\Models\Link GettingTestedInfo()
- * @method \gorriecoe\Link\Models\Link GovernmentBenefitsInfo()
- * @method \gorriecoe\Link\Models\Link PublicTransportClosuresInfo()
- * @method \gorriecoe\Link\Models\Link QuarantineGuidelines()
- * @method \gorriecoe\Link\Models\Link SchoolClosuresInfo()
- * @method \gorriecoe\Link\Models\Link TravelBans()
  * @method \SilverStripe\ORM\ManyManyList<\Page> Pages()
  * @property int $CoreLinkID
  * @method \SilverStripe\LinkField\Models\Link CoreLink()
@@ -113,25 +91,15 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
 
     private static array $has_one = [
         'Image' => Image::class,
-        'Link' => Link::class,
         'CoreLink' => CoreLink::class,
-        'NewsUpdatesAndGuidelines' => Link::class,
         'CoreNewsUpdatesAndGuidelines' => CoreLink::class,
-        'DiseasePreventionInfo' => Link::class,
         'CoreDiseasePreventionInfo' => CoreLink::class,
-        'DiseaseSpreadStatistics' => Link::class,
         'CoreDiseaseSpreadStatistics' => CoreLink::class,
-        'GettingTestedInfo' => Link::class,
         'CoreGettingTestedInfo' => CoreLink::class,
-        'GovernmentBenefitsInfo' => Link::class,
         'CoreGovernmentBenefitsInfo' => CoreLink::class,
-        'PublicTransportClosuresInfo' => Link::class,
         'CorePublicTransportClosuresInfo' => CoreLink::class,
-        'QuarantineGuidelines' => Link::class,
         'CoreQuarantineGuidelines' => CoreLink::class,
-        'SchoolClosuresInfo' => Link::class,
         'CoreSchoolClosuresInfo' => CoreLink::class,
-        'TravelBans' => Link::class,
         'CoreTravelBans' => CoreLink::class
     ];
 
@@ -326,18 +294,11 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             ]
         );
 
-        $has_ones = $this->hasOne();
-
         // handle link fields
-        foreach ($has_ones as $relation => $class) {
-            if ($class != Link::class) {
-                continue;
-            }
+        foreach (array_keys(self::getLinkDescriptions()) as $relation) {
 
             $fields->removeByName([
-                $relation,
                 "Core" . $relation,
-                $relation . "ID",
                 "Core" . $relation . "ID"
             ]);
 
@@ -371,27 +332,18 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
      * Get the relevant link field based on the migration state of a link
      * @param string $relationName the name of a link e.g TravelBans
      */
-    public function getLinkFieldForRelation(string $relationName): CoreLinkField|LinkField
+    public function getLinkFieldForRelation(string $relationName): CoreLinkField
     {
-        $link = $this->getDerivedLink($relationName);
-        if ($link instanceof CoreLink) {
-            return CoreLinkField::create(
-                "Core{$relationName}",
-                _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName))
-            );
-        }
-
-        return LinkField::create(
-            $relationName,
-            _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName)),
-            $this
+        return CoreLinkField::create(
+            "Core" . $relationName,
+            _t(self::class . 'LINK_' . strtoupper($relationName), $this->getLinkDescription($relationName))
         );
     }
 
     /**
      * Template method
      */
-    public function DerivedLink(string $relationName): CoreLink|Link
+    public function DerivedLink(string $relationName): ?CoreLink
     {
         return $this->getDerivedLink($relationName);
     }
@@ -399,21 +351,14 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
     /**
      * @param string $relationName the name of a link e.g TravelBans
      */
-    public function getDerivedLink(string $relationName): CoreLink|Link
+    public function getDerivedLink(string $relationName): ?CoreLink
     {
-
-        $coreLink = $this->getComponent("Core{$relationName}");
-        /** @var Link $legacyLink */
-        $legacyLink = $this->getComponent($relationName);
-        if ($coreLink->isInDB() || !$legacyLink->isInDB()) {
-            /** @var CoreLink $coreLink */
-            return $coreLink;
-        }
-
-        return $legacyLink;
+        /** @var ?CoreLink $link  */
+        $link = $this->getComponent("Core" . $relationName);
+        return $link;
     }
 
-    public function getLinkDescriptions(): array
+    public static function getLinkDescriptions(): array
     {
         return [
             'Link' => _t(self::class . '.Link_INFO', 'The URL where a person can find more information about the announcement'),
@@ -438,9 +383,12 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
         ];
     }
 
+    /**
+     * @param string $key one of the keys from getLinkDescriptions
+     */
     public function getLinkDescription(string $key): string
     {
-        $descriptions = $this->getLinkDescriptions();
+        $descriptions = self::getLinkDescriptions();
 
         return $descriptions[ $key ] ?? "";
     }
@@ -491,28 +439,12 @@ class SpecialAnnouncement extends DataObject implements PermissionProvider, Temp
             }
         }
 
-        $has_ones = $record->hasOne();
-
-        /**
-         * add Links to provided information
-         * handle both types of links
-         */
-        foreach ($has_ones as $relation => $class) {
-            if ($class != Link::class) {
-                continue;
-            }
-
+        foreach (array_keys(self::getLinkDescriptions()) as $relation) {
             // Determine which link to retrieve
-            $targetLink = $record->{$relation}();
-            $isMigrated = $targetLink && $targetLink->IsMigrated == 1;
-            if ($isMigrated) {
-                // migrated link
-                $targetLink = $targetLink->MigratedLink();
-            }
-
+            $targetLink = $record->getDerivedLink($relation);
             if ($targetLink && $targetLink->isInDB()) {
                 $key = lcfirst((string) $relation);
-                $url = $targetLink->getLinkURL();
+                $url = $targetLink->getURL();
                 if ($url) {
                     $schema[ $key ] = $url;
                 }
